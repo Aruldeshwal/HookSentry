@@ -114,6 +114,37 @@ const DEMO_EVENTS_BY_ENDPOINT: Record<string, WebhookEventView[]> = {
       latencyMs: 29,
       createdAt: new Date(Date.now() - 110000).toISOString(),
     },
+    {
+      id: "evt_strp_9011_dlq_01",
+      endpointId: "ep_stripe_prod_9011",
+      idempotencyKey: "idemp_strp_drift_9901",
+      eventType: "customer.subscription.updated",
+      payload: {
+        id: "sub_1Qtw882eZvKYlo2C",
+        object: "subscription",
+        status: "active",
+        customer_reference: "cus_N9X4k2m9s",
+        current_period_end: 1790467200,
+        plan: {
+          id: "plan_scale_v2",
+          amount: 49900,
+          currency: "usd",
+        },
+      },
+      headers: {
+        "content-type": "application/json",
+        "stripe-signature": "t=1758921600,v1=62098bc198a28...",
+        "user-agent": "Stripe/1.0 (+https://stripe.com/docs/webhooks)",
+        "x-idempotency-key": "idemp_strp_drift_9901",
+      },
+      status: "FAILED_DLQ",
+      attempts: 3,
+      maxAttempts: 3,
+      lastError: "HTTP 422 Unprocessable Entity: Downstream receiver validation failed: missing required field 'customer_id'. Expected string, received undefined.",
+      responseStatus: 422,
+      latencyMs: 89,
+      createdAt: new Date(Date.now() - 360000).toISOString(),
+    },
   ],
   ep_shopify_store_4412: [
     {
@@ -350,3 +381,78 @@ export function recordSimulatedEvent(event: WebhookEventView) {
     RUNTIME_SIMULATED_EVENTS.pop();
   }
 }
+
+export async function getDlqEventsByEndpointId(
+  endpointId: string
+): Promise<WebhookEventView[]> {
+  const allEvents = await getEventsByEndpointId(endpointId);
+  return allEvents.filter((ev) => ev.status === "FAILED_DLQ");
+}
+
+export async function getEventById(
+  endpointId: string,
+  eventId: string
+): Promise<WebhookEventView | null> {
+  const allEvents = await getEventsByEndpointId(endpointId);
+  const found = allEvents.find((e) => e.id === eventId);
+  if (found) return found;
+
+  // Check demo events directly
+  for (const epEvents of Object.values(DEMO_EVENTS_BY_ENDPOINT)) {
+    const match = epEvents.find((e) => e.id === eventId);
+    if (match) return match;
+  }
+
+  return null;
+}
+
+export async function updateEventStatus(
+  endpointId: string,
+  eventId: string,
+  status: WebhookEventView["status"],
+  responseStatus: number = 200,
+  healedPayload?: Record<string, unknown>
+): Promise<boolean> {
+  // Update in runtime store if present
+  const runtimeItem = RUNTIME_SIMULATED_EVENTS.find(
+    (e) => e.id === eventId && e.endpointId === endpointId
+  );
+  if (runtimeItem) {
+    runtimeItem.status = status;
+    runtimeItem.responseStatus = responseStatus;
+    if (healedPayload) {
+      runtimeItem.payload = healedPayload;
+    }
+  }
+
+  // Also update demo events map if present
+  const epDemoList = DEMO_EVENTS_BY_ENDPOINT[endpointId];
+  if (epDemoList) {
+    const demoItem = epDemoList.find((e) => e.id === eventId);
+    if (demoItem) {
+      demoItem.status = status;
+      demoItem.responseStatus = responseStatus;
+      if (healedPayload) {
+        demoItem.payload = healedPayload;
+      }
+    }
+  }
+
+  // Update DB if accessible
+  try {
+    await db
+      .update(webhookEvents)
+      .set({
+        status,
+        responseStatus,
+        payload: healedPayload,
+        updatedAt: new Date(),
+      })
+      .where(eq(webhookEvents.id, eventId));
+  } catch {
+    // Database offline fallback
+  }
+
+  return true;
+}
+
