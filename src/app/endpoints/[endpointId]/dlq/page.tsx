@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Terminal } from "lucide-react";
-import { OperatorNavProfile } from "@/components/auth/OperatorNavProfile";
+import { UserButton } from "@clerk/nextjs";
 import { getEndpointById } from "@/lib/events-service";
 import { getDlqEventsByEndpointId } from "@/lib/events-service";
 import { DlqHeader } from "@/components/dlq/DlqHeader";
@@ -68,7 +68,7 @@ export default async function EndpointDlqPage({ params }: PageProps) {
               <span>Quarantine Watcher Online</span>
             </div>
 
-            <OperatorNavProfile />
+            <UserButton />
           </div>
         </div>
       </header>

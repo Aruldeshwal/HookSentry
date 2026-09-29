@@ -13,7 +13,7 @@ import {
   Terminal,
   Activity,
 } from "lucide-react";
-import { OperatorNavProfile } from "@/components/auth/OperatorNavProfile";
+import { UserButton } from "@clerk/nextjs";
 
 interface EndpointsShellProps {
   initialEndpoints: EndpointView[];
@@ -120,7 +120,7 @@ export function EndpointsShell({
               <span>Provision Endpoint</span>
             </button>
 
-            <OperatorNavProfile />
+            <UserButton />
           </div>
         </div>
       </header>

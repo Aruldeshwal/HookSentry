@@ -1,20 +1,8 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
 import Link from "next/link";
 import { ShieldCheck, ArrowRight, Terminal } from "lucide-react";
-import { useAuth } from "@clerk/nextjs";
-import { OperatorNavProfile } from "@/components/auth/OperatorNavProfile";
-
-function subscribe(callback: () => void) {
-  window.addEventListener("storage", callback);
-  return () => window.removeEventListener("storage", callback);
-}
-
-function getOperatorSnapshot() {
-  if (typeof document === "undefined") return false;
-  return document.cookie.includes("hooksentry_operator=active");
-}
+import { SignInButton, SignUpButton, Show, UserButton } from "@clerk/nextjs";
 
 function GithubIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -36,15 +24,6 @@ function GithubIcon(props: React.SVGProps<SVGSVGElement>) {
 }
 
 export function NavBar() {
-  const { isLoaded, isSignedIn } = useAuth();
-  const isDevOperator = useSyncExternalStore(
-    subscribe,
-    getOperatorSnapshot,
-    () => false
-  );
-
-  const isUserAuthenticated = (isLoaded && isSignedIn) || isDevOperator;
-
   return (
     <header className="sticky top-0 z-50 w-full border-b border-white/[0.08] bg-zinc-950/80 backdrop-blur-md">
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -104,7 +83,7 @@ export function NavBar() {
           </a>
         </nav>
 
-        {/* Right: GitHub & Live Console CTA */}
+        {/* Right: GitHub & Clerk Auth Controls */}
         <div className="flex items-center gap-3">
           <a
             href="https://github.com/Aruldeshwal/HookSentry"
@@ -119,8 +98,8 @@ export function NavBar() {
             </span>
           </a>
 
-          {/* Auth State Management */}
-          {isUserAuthenticated ? (
+          {/* Clerk Auth Controls */}
+          <Show when="signed-in">
             <div className="flex items-center gap-2">
               <Link
                 href="/endpoints"
@@ -130,26 +109,26 @@ export function NavBar() {
                 <span>Fleet Console</span>
                 <ArrowRight className="h-3 w-3 text-emerald-400" />
               </Link>
-              <OperatorNavProfile showEmail={false} />
+              <UserButton />
             </div>
-          ) : (
-            <div className="flex items-center gap-2">
-              <Link
-                href="/auth/login"
-                className="text-xs text-zinc-300 hover:text-white transition px-2.5 py-1.5"
-              >
-                Sign In
-              </Link>
+          </Show>
 
-              <Link
-                href="/auth/sign-up"
-                className="inline-flex items-center gap-1.5 rounded-md bg-emerald-500 hover:bg-emerald-400 px-3 py-1.5 text-xs font-semibold text-zinc-950 transition shadow-sm"
-              >
-                <span>Sign Up</span>
-                <ArrowRight className="h-3 w-3 text-zinc-950" />
-              </Link>
+          <Show when="signed-out">
+            <div className="flex items-center gap-2">
+              <SignInButton mode="modal">
+                <button className="text-xs text-zinc-300 hover:text-white transition px-2.5 py-1.5 cursor-pointer">
+                  Sign In
+                </button>
+              </SignInButton>
+
+              <SignUpButton mode="modal">
+                <button className="inline-flex items-center gap-1.5 rounded-md bg-emerald-500 hover:bg-emerald-400 px-3 py-1.5 text-xs font-semibold text-zinc-950 transition shadow-sm cursor-pointer">
+                  <span>Sign Up</span>
+                  <ArrowRight className="h-3 w-3 text-zinc-950" />
+                </button>
+              </SignUpButton>
             </div>
-          )}
+          </Show>
         </div>
       </div>
     </header>
