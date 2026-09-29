@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Terminal } from "lucide-react";
-import { UserButton } from "@clerk/nextjs";
+import { OperatorNavProfile } from "@/components/auth/OperatorNavProfile";
 import { getEndpointById } from "@/lib/events-service";
 import {
   getTargetContractByEndpointId,
@@ -71,13 +71,7 @@ export default async function EndpointSchemasPage({ params }: PageProps) {
               <span>Gateway Rules Engine Online</span>
             </div>
 
-            <UserButton
-              appearance={{
-                elements: {
-                  avatarBox: "h-7 w-7 rounded-md border border-zinc-700",
-                },
-              }}
-            />
+            <OperatorNavProfile />
           </div>
         </div>
       </header>

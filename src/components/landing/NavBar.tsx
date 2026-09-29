@@ -1,8 +1,20 @@
 "use client";
 
+import { useSyncExternalStore } from "react";
 import Link from "next/link";
 import { ShieldCheck, ArrowRight, Terminal } from "lucide-react";
-import { Show, UserButton } from "@clerk/nextjs";
+import { useAuth } from "@clerk/nextjs";
+import { OperatorNavProfile } from "@/components/auth/OperatorNavProfile";
+
+function subscribe(callback: () => void) {
+  window.addEventListener("storage", callback);
+  return () => window.removeEventListener("storage", callback);
+}
+
+function getOperatorSnapshot() {
+  if (typeof document === "undefined") return false;
+  return document.cookie.includes("hooksentry_operator=active");
+}
 
 function GithubIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -24,6 +36,15 @@ function GithubIcon(props: React.SVGProps<SVGSVGElement>) {
 }
 
 export function NavBar() {
+  const { isLoaded, isSignedIn } = useAuth();
+  const isDevOperator = useSyncExternalStore(
+    subscribe,
+    getOperatorSnapshot,
+    () => false
+  );
+
+  const isUserAuthenticated = (isLoaded && isSignedIn) || isDevOperator;
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-white/[0.08] bg-zinc-950/80 backdrop-blur-md">
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -99,40 +120,36 @@ export function NavBar() {
           </a>
 
           {/* Auth State Management */}
-          <Show when="signed-out">
-            <Link
-              href="/auth/login"
-              className="text-xs text-zinc-300 hover:text-white transition px-2.5 py-1.5"
-            >
-              Log In
-            </Link>
+          {isUserAuthenticated ? (
+            <div className="flex items-center gap-2">
+              <Link
+                href="/endpoints"
+                className="inline-flex items-center gap-1.5 rounded-md border border-emerald-500/40 bg-emerald-500/10 px-3 py-1.5 text-xs font-medium text-emerald-300 transition hover:bg-emerald-500/20 hover:border-emerald-500/60"
+              >
+                <Terminal className="h-3.5 w-3.5 text-emerald-400" />
+                <span>Fleet Console</span>
+                <ArrowRight className="h-3 w-3 text-emerald-400" />
+              </Link>
+              <OperatorNavProfile showEmail={false} />
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <Link
+                href="/auth/login"
+                className="text-xs text-zinc-300 hover:text-white transition px-2.5 py-1.5"
+              >
+                Log In
+              </Link>
 
-            <Link
-              href="/auth/sign-up"
-              className="inline-flex items-center gap-1.5 rounded-md bg-emerald-500 hover:bg-emerald-400 px-3 py-1.5 text-xs font-semibold text-zinc-950 transition shadow-sm"
-            >
-              <span>Get Started</span>
-              <ArrowRight className="h-3 w-3 text-zinc-950" />
-            </Link>
-          </Show>
-
-          <Show when="signed-in">
-            <Link
-              href="/endpoints"
-              className="inline-flex items-center gap-1.5 rounded-md border border-emerald-500/40 bg-emerald-500/10 px-3 py-1.5 text-xs font-medium text-emerald-300 transition hover:bg-emerald-500/20 hover:border-emerald-500/60"
-            >
-              <Terminal className="h-3.5 w-3.5 text-emerald-400" />
-              <span>Fleet Console</span>
-              <ArrowRight className="h-3 w-3 text-emerald-400" />
-            </Link>
-            <UserButton
-              appearance={{
-                elements: {
-                  avatarBox: "h-7 w-7 rounded-md border border-zinc-700",
-                },
-              }}
-            />
-          </Show>
+              <Link
+                href="/auth/sign-up"
+                className="inline-flex items-center gap-1.5 rounded-md bg-emerald-500 hover:bg-emerald-400 px-3 py-1.5 text-xs font-semibold text-zinc-950 transition shadow-sm"
+              >
+                <span>Get Started</span>
+                <ArrowRight className="h-3 w-3 text-zinc-950" />
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </header>

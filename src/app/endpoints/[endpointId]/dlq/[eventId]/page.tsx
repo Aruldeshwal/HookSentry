@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Terminal } from "lucide-react";
-import { UserButton } from "@clerk/nextjs";
+import { OperatorNavProfile } from "@/components/auth/OperatorNavProfile";
 import { getEndpointById, getEventById } from "@/lib/events-service";
 import { analyzePoisonedEvent } from "@/lib/triage-engine";
 import { TriageConsole } from "@/components/dlq/TriageConsole";
@@ -81,13 +81,7 @@ export default async function EndpointDlqEventPage({ params }: PageProps) {
               <span>AI Triage Active</span>
             </div>
 
-            <UserButton
-              appearance={{
-                elements: {
-                  avatarBox: "h-7 w-7 rounded-md border border-zinc-700",
-                },
-              }}
-            />
+            <OperatorNavProfile />
           </div>
         </div>
       </header>
