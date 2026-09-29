@@ -138,14 +138,14 @@ export function NavBar() {
                 href="/auth/login"
                 className="text-xs text-zinc-300 hover:text-white transition px-2.5 py-1.5"
               >
-                Log In
+                Sign In
               </Link>
 
               <Link
                 href="/auth/sign-up"
                 className="inline-flex items-center gap-1.5 rounded-md bg-emerald-500 hover:bg-emerald-400 px-3 py-1.5 text-xs font-semibold text-zinc-950 transition shadow-sm"
               >
-                <span>Get Started</span>
+                <span>Sign Up</span>
                 <ArrowRight className="h-3 w-3 text-zinc-950" />
               </Link>
             </div>
