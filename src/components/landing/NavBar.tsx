@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { ShieldCheck, ArrowRight, Terminal } from "lucide-react";
+import { Show, UserButton } from "@clerk/nextjs";
 
 function GithubIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -97,14 +98,42 @@ export function NavBar() {
             </span>
           </a>
 
-          <Link
-            href="/endpoints"
-            className="inline-flex items-center gap-1.5 rounded-md border border-emerald-500/40 bg-emerald-500/10 px-3 py-1.5 text-xs font-medium text-emerald-300 transition hover:bg-emerald-500/20 hover:border-emerald-500/60"
-          >
-            <Terminal className="h-3.5 w-3.5 text-emerald-400" />
-            <span>Open Console</span>
-            <ArrowRight className="h-3 w-3 text-emerald-400" />
-          </Link>
+          {/* Auth State Management */}
+          <Show when="signed-out">
+            <Link
+              href="/auth/login"
+              className="text-xs text-zinc-300 hover:text-white transition px-2.5 py-1.5"
+            >
+              Log In
+            </Link>
+
+            <Link
+              href="/endpoints"
+              className="inline-flex items-center gap-1.5 rounded-md border border-emerald-500/40 bg-emerald-500/10 px-3 py-1.5 text-xs font-medium text-emerald-300 transition hover:bg-emerald-500/20 hover:border-emerald-500/60"
+            >
+              <Terminal className="h-3.5 w-3.5 text-emerald-400" />
+              <span>Open Console</span>
+              <ArrowRight className="h-3 w-3 text-emerald-400" />
+            </Link>
+          </Show>
+
+          <Show when="signed-in">
+            <Link
+              href="/endpoints"
+              className="inline-flex items-center gap-1.5 rounded-md border border-emerald-500/40 bg-emerald-500/10 px-3 py-1.5 text-xs font-medium text-emerald-300 transition hover:bg-emerald-500/20 hover:border-emerald-500/60"
+            >
+              <Terminal className="h-3.5 w-3.5 text-emerald-400" />
+              <span>Fleet Console</span>
+              <ArrowRight className="h-3 w-3 text-emerald-400" />
+            </Link>
+            <UserButton
+              appearance={{
+                elements: {
+                  avatarBox: "h-7 w-7 rounded-md border border-zinc-700",
+                },
+              }}
+            />
+          </Show>
         </div>
       </div>
     </header>

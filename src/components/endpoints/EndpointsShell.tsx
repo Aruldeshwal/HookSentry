@@ -13,6 +13,7 @@ import {
   Terminal,
   Activity,
 } from "lucide-react";
+import { UserButton } from "@clerk/nextjs";
 
 interface EndpointsShellProps {
   initialEndpoints: EndpointView[];
@@ -118,6 +119,14 @@ export function EndpointsShell({
               <Plus className="h-3.5 w-3.5" />
               <span>Provision Endpoint</span>
             </button>
+
+            <UserButton
+              appearance={{
+                elements: {
+                  avatarBox: "h-7 w-7 rounded-md border border-zinc-700",
+                },
+              }}
+            />
           </div>
         </div>
       </header>
