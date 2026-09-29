@@ -31,9 +31,17 @@ export function HeroSection() {
 
         {/* Action Controls & Quick CLI */}
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+          <Link
+            href="/auth/sign-up"
+            className="inline-flex h-9 items-center justify-center gap-1.5 rounded-md bg-emerald-500 px-4 text-xs font-semibold text-zinc-950 transition hover:bg-emerald-400 shadow-sm"
+          >
+            <span>Get Started Free</span>
+            <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
+
           <a
             href="#sandbox"
-            className="inline-flex h-9 items-center justify-center rounded-md bg-zinc-100 px-4 text-xs font-medium text-zinc-900 transition hover:bg-white shadow-sm"
+            className="inline-flex h-9 items-center justify-center rounded-md border border-white/[0.1] bg-zinc-900/80 px-4 text-xs font-medium text-zinc-300 transition hover:border-zinc-700 hover:text-white"
           >
             Launch Live Sandbox
           </a>

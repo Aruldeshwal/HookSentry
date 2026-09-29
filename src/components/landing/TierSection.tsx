@@ -23,8 +23,8 @@ export function TierSection() {
         "Manual RFC 6902 mutation patch review",
         "Standard HMAC-SHA256 signature verification",
       ],
-      ctaText: "Deploy Self-Hosted",
-      ctaHref: "/endpoints",
+      ctaText: "Get Started Free",
+      ctaHref: "/auth/sign-up",
       highlight: false,
     },
     {
@@ -44,7 +44,7 @@ export function TierSection() {
         "Custom alerting over Slack & PagerDuty",
       ],
       ctaText: "Start 14-Day Free Trial",
-      ctaHref: "/endpoints",
+      ctaHref: "/auth/sign-up",
       highlight: true,
     },
     {

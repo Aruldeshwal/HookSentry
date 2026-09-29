@@ -108,12 +108,11 @@ export function NavBar() {
             </Link>
 
             <Link
-              href="/endpoints"
-              className="inline-flex items-center gap-1.5 rounded-md border border-emerald-500/40 bg-emerald-500/10 px-3 py-1.5 text-xs font-medium text-emerald-300 transition hover:bg-emerald-500/20 hover:border-emerald-500/60"
+              href="/auth/sign-up"
+              className="inline-flex items-center gap-1.5 rounded-md bg-emerald-500 hover:bg-emerald-400 px-3 py-1.5 text-xs font-semibold text-zinc-950 transition shadow-sm"
             >
-              <Terminal className="h-3.5 w-3.5 text-emerald-400" />
-              <span>Open Console</span>
-              <ArrowRight className="h-3 w-3 text-emerald-400" />
+              <span>Get Started</span>
+              <ArrowRight className="h-3 w-3 text-zinc-950" />
             </Link>
           </Show>
 
